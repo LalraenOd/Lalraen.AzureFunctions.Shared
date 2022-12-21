@@ -16,16 +16,18 @@ namespace Lalraen.AzureFunctions.Shared
             _telegramBotClient = new TelegramBotClient(botToken);
         }
 
-        public async Task SendMessageAsync(ChatId chatId, string message)
+        public async Task SendMessageAsync(ChatId chatId, string message, bool disableNotification = false)
         {
             CheckMessageString(message);
 
             _logger.LogInformation(message);
 
-            await SendTextMessageWithAction(chatId, message);
+            await SendTextMessageWithAction(chatId, message, disableNotification)
+                .ConfigureAwait(false);
         }
 
-        public async Task SendMessageToAllClientsAsync(IEnumerable<ChatId> clientChatIds, string message)
+        public async Task SendMessageToAllClientsAsync(IEnumerable<ChatId> clientChatIds, string message,
+            bool disableNotification = false)
         {
             CheckMessageString(message);
 
@@ -33,14 +35,18 @@ namespace Lalraen.AzureFunctions.Shared
 
             foreach (var chatId in clientChatIds)
             {
-                await SendTextMessageWithAction(chatId, message);
+                await SendTextMessageWithAction(chatId, message, disableNotification)
+                    .ConfigureAwait(false);
             }
         }
 
-        private async Task SendTextMessageWithAction(ChatId chatId, string message)
+        private async Task SendTextMessageWithAction(ChatId chatId, string message, bool disableNotification)
         {
-            await _telegramBotClient.SendChatActionAsync(chatId, ChatAction.Typing);
-            await _telegramBotClient.SendTextMessageAsync(chatId, message);
+            await _telegramBotClient.SendChatActionAsync(chatId, ChatAction.Typing)
+                .ConfigureAwait(false);
+
+            await _telegramBotClient.SendTextMessageAsync(chatId, message, disableNotification: disableNotification)
+                .ConfigureAwait(false);
         }
 
         private void CheckMessageString(string message)

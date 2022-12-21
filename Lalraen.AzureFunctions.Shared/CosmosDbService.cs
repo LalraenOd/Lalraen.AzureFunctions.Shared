@@ -38,7 +38,7 @@ namespace Lalraen.AzureFunctions.Shared
         public async Task<T?> Get(string rowKey)
         {
             var response = await _tableClient
-                .GetEntityAsync<T>(PartitionKey, rowKey)
+                .GetEntityIfExistsAsync<T>(PartitionKey, rowKey)
                 .ConfigureAwait(false);
 
             if (response.HasValue)

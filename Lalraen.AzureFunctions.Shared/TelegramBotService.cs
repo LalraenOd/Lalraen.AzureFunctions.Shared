@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -53,11 +56,11 @@ namespace Lalraen.AzureFunctions.Shared
         {
             if (string.IsNullOrEmpty(message))
             {
-                const string ErrorMessage = $"{nameof(message)} has no content. String is empty.";
+                var errorMessage = $"{nameof(message)} has no content. String is empty.";
 
-                _logger.LogError(ErrorMessage);
+                _logger.LogError(errorMessage);
 
-                throw new ArgumentNullException(nameof(message), ErrorMessage);
+                throw new ArgumentNullException(nameof(message), errorMessage);
             }
         }
     }

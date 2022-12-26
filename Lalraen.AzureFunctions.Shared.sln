@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lalraen.AzureFunctions.Shared", "Lalraen.AzureFunctions.Shared\Lalraen.AzureFunctions.Shared.csproj", "{8771A30A-6FEC-4BA7-BAE2-0ACFD508D64B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lalraen.AzureFunctions.Shared", "Lalraen.AzureFunctions.Shared\Lalraen.AzureFunctions.Shared.csproj", "{8771A30A-6FEC-4BA7-BAE2-0ACFD508D64B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionWorkflows", "SolutionWorkflows", "{A495E62D-F491-4056-90F5-140DED89F293}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\Build.yml = .github\workflows\Build.yml
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

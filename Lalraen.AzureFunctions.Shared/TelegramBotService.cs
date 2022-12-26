@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Lalraen.AzureFunctions.Shared
 {
@@ -29,6 +30,17 @@ namespace Lalraen.AzureFunctions.Shared
                 .ConfigureAwait(false);
         }
 
+        public async Task SendMessageAsync(ChatId chatId, string message, IReplyMarkup inline,
+            bool disableNotification = false)
+        {
+            CheckMessageString(message);
+
+            _logger.LogInformation(message);
+
+            await SendTextMessageWithAction(chatId, message, inline, disableNotification)
+                .ConfigureAwait(false);
+        }
+
         public async Task SendMessageToAllClientsAsync(IEnumerable<ChatId> clientChatIds, string message,
             bool disableNotification = false)
         {
@@ -49,6 +61,17 @@ namespace Lalraen.AzureFunctions.Shared
                 .ConfigureAwait(false);
 
             await _telegramBotClient.SendTextMessageAsync(chatId, message, disableNotification: disableNotification)
+                .ConfigureAwait(false);
+        }
+
+        private async Task SendTextMessageWithAction(ChatId chatId, string message, IReplyMarkup replyMarkup,
+            bool disableNotification)
+        {
+            await _telegramBotClient.SendChatActionAsync(chatId, ChatAction.Typing)
+                .ConfigureAwait(false);
+
+            await _telegramBotClient.SendTextMessageAsync(chatId, message, replyMarkup: replyMarkup,
+                    disableNotification: disableNotification)
                 .ConfigureAwait(false);
         }
 

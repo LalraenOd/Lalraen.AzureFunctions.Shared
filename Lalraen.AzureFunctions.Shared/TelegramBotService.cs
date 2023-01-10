@@ -10,11 +10,12 @@ namespace Lalraen.AzureFunctions.Shared
 {
     public class TelegramBotService
     {
-        private readonly ITelegramBotClient _telegramBotClient;
+        // ReSharper disable once MemberCanBePrivate.Global
+        public ITelegramBotClient TelegramBotClient { get; }
 
         public TelegramBotService(string botToken)
         {
-            _telegramBotClient = new TelegramBotClient(botToken);
+            TelegramBotClient = new TelegramBotClient(botToken);
         }
 
         public async Task SendMessageAsync(ChatId chatId, string message, bool disableNotification = false)
@@ -48,25 +49,25 @@ namespace Lalraen.AzureFunctions.Shared
 
         private async Task SendTextMessageWithAction(ChatId chatId, string message, bool disableNotification)
         {
-            await _telegramBotClient.SendChatActionAsync(chatId, ChatAction.Typing)
+            await TelegramBotClient.SendChatActionAsync(chatId, ChatAction.Typing)
                 .ConfigureAwait(false);
 
-            await _telegramBotClient.SendTextMessageAsync(chatId, message, disableNotification: disableNotification)
+            await TelegramBotClient.SendTextMessageAsync(chatId, message, disableNotification: disableNotification)
                 .ConfigureAwait(false);
         }
 
         private async Task SendTextMessageWithAction(ChatId chatId, string message, IReplyMarkup replyMarkup,
             bool disableNotification)
         {
-            await _telegramBotClient.SendChatActionAsync(chatId, ChatAction.Typing)
+            await TelegramBotClient.SendChatActionAsync(chatId, ChatAction.Typing)
                 .ConfigureAwait(false);
 
-            await _telegramBotClient.SendTextMessageAsync(chatId, message, replyMarkup: replyMarkup,
+            await TelegramBotClient.SendTextMessageAsync(chatId, message, replyMarkup: replyMarkup,
                     disableNotification: disableNotification)
                 .ConfigureAwait(false);
         }
 
-        private void CheckMessageString(string message)
+        private static void CheckMessageString(string message)
         {
             if (string.IsNullOrEmpty(message))
             {

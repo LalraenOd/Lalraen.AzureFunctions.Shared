@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -11,20 +10,16 @@ namespace Lalraen.AzureFunctions.Shared
 {
     public class TelegramBotService
     {
-        private readonly ILogger _logger;
         private readonly ITelegramBotClient _telegramBotClient;
 
-        public TelegramBotService(ILogger logger, string botToken)
+        public TelegramBotService(string botToken)
         {
-            _logger = logger;
             _telegramBotClient = new TelegramBotClient(botToken);
         }
 
         public async Task SendMessageAsync(ChatId chatId, string message, bool disableNotification = false)
         {
             CheckMessageString(message);
-
-            _logger.LogInformation(message);
 
             await SendTextMessageWithAction(chatId, message, disableNotification)
                 .ConfigureAwait(false);
@@ -35,8 +30,6 @@ namespace Lalraen.AzureFunctions.Shared
         {
             CheckMessageString(message);
 
-            _logger.LogInformation(message);
-
             await SendTextMessageWithAction(chatId, message, inline, disableNotification)
                 .ConfigureAwait(false);
         }
@@ -45,8 +38,6 @@ namespace Lalraen.AzureFunctions.Shared
             bool disableNotification = false)
         {
             CheckMessageString(message);
-
-            _logger.LogInformation(message);
 
             foreach (var chatId in clientChatIds)
             {
@@ -80,8 +71,6 @@ namespace Lalraen.AzureFunctions.Shared
             if (string.IsNullOrEmpty(message))
             {
                 var errorMessage = $"{nameof(message)} has no content. String is empty.";
-
-                _logger.LogError(errorMessage);
 
                 throw new ArgumentNullException(nameof(message), errorMessage);
             }

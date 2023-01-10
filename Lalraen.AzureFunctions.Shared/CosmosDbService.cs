@@ -1,15 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Azure;
+using Azure.Data.Tables;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Azure;
-using Azure.Data.Tables;
-using Microsoft.Extensions.Logging;
 
 namespace Lalraen.AzureFunctions.Shared
 {
     public class CosmosDbService<T> where T : class, ITableEntity, new()
     {
-        private readonly ILogger _logger;
         private readonly TableClient _tableClient;
 
         // ReSharper disable once MemberCanBePrivate.Global
@@ -18,10 +16,9 @@ namespace Lalraen.AzureFunctions.Shared
         // ReSharper disable once MemberCanBePrivate.Global
         public readonly string PartitionKey;
 
-        public CosmosDbService(ILogger logger, string connectionString, string tableName, string partitionKey)
+        public CosmosDbService(string connectionString, string tableName, string partitionKey)
         {
             TableName = tableName;
-            _logger = logger;
             _tableClient = new TableClient(connectionString, tableName);
             PartitionKey = partitionKey;
         }
@@ -31,8 +28,6 @@ namespace Lalraen.AzureFunctions.Shared
             await _tableClient
                 .AddEntityAsync(entity)
                 .ConfigureAwait(false);
-
-            _logger.LogDebug($"Entity with {entity.RowKey} row key added to {TableName}");
         }
 
         public async Task<T?> Get(string rowKey)
@@ -43,8 +38,6 @@ namespace Lalraen.AzureFunctions.Shared
 
             if (response.HasValue)
             {
-                _logger.LogDebug($"Entity with {rowKey} row key  retrieved");
-
                 return response.Value;
             }
 
@@ -58,8 +51,6 @@ namespace Lalraen.AzureFunctions.Shared
                 .ToListAsync()
                 .ConfigureAwait(false);
 
-            _logger.LogDebug($"Loaded {entities.Count} for partition key {PartitionKey}");
-
             return entities;
         }
 
@@ -68,8 +59,6 @@ namespace Lalraen.AzureFunctions.Shared
             await _tableClient
                 .UpdateEntityAsync(entity, ETag.All)
                 .ConfigureAwait(false);
-
-            _logger.LogDebug($"Entity with {entity.RowKey} row key updated in {TableName}");
         }
 
         public async Task Delete(string rowKey)
@@ -77,8 +66,6 @@ namespace Lalraen.AzureFunctions.Shared
             await _tableClient
                 .DeleteEntityAsync(PartitionKey, rowKey)
                 .ConfigureAwait(false);
-
-            _logger.LogDebug($"Entity with {rowKey} row key deleted from {TableName}");
         }
     }
 }

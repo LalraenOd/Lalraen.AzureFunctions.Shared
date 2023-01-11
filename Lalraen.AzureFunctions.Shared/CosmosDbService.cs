@@ -36,15 +36,11 @@ namespace Lalraen.AzureFunctions.Shared
                 .GetEntityIfExistsAsync<T>(PartitionKey, rowKey)
                 .ConfigureAwait(false);
 
-            if (response.HasValue)
-            {
-                return response.Value;
-            }
-
-            return null;
+            return response.HasValue ? response.Value : null;
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        // ReSharper disable once MemberCanBePrivate.Global
+        public async Task<IEnumerable<T>> GetAllPartition()
         {
             var entities = await _tableClient
                 .QueryAsync<T>(x => x.PartitionKey == PartitionKey)
@@ -66,6 +62,19 @@ namespace Lalraen.AzureFunctions.Shared
             await _tableClient
                 .DeleteEntityAsync(PartitionKey, rowKey)
                 .ConfigureAwait(false);
+        }
+
+        public async Task DeleteAllPartition()
+        {
+            var entities = await GetAllPartition()
+                .ConfigureAwait(false);
+
+            foreach (var entity in entities)
+            {
+                await _tableClient
+                    .DeleteEntityAsync(PartitionKey, entity.RowKey)
+                    .ConfigureAwait(false);
+            }
         }
     }
 }

@@ -44,7 +44,7 @@ namespace Lalraen.AzureFunctions.Shared
             return null;
         }
 
-        public async Task<List<T>> GetAll()
+        public async Task<IEnumerable<T>> GetAll()
         {
             var entities = await _tableClient
                 .QueryAsync<T>(x => x.PartitionKey == PartitionKey)
